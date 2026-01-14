@@ -12,6 +12,8 @@
 
 # TEST IT WITH THE MATRICES FROM THE EXERCISES IN THE CLASS!
 
+import pytest
+
 
 class Matrix:
     def __init__(self, data: tuple[tuple[float, ...], ...]):
@@ -67,49 +69,51 @@ class Matrix:
         # ^ seems to match "transposing" a matrix?
         # nvm?
 
-        if type(other) is Matrix and self.columns == other.rows:
-            # 2x2
-            # a b   e f   ae+bg af+bh
-            #     x     =
-            # c d   g h   ce+dg cf+dh
-            # ((a, b), (c, d)) * ((e, f), (g, h)) = ((a * e + b * g, a * f + b * h), (c * e + d * g, c * f + d * h))
-            # self * other = out
+        if type(other) is Matrix:
+            if self.columns == other.rows:
+                # 2x2
+                # a b   e f   ae+bg af+bh
+                #     x     =
+                # c d   g h   ce+dg cf+dh
+                # ((a, b), (c, d)) * ((e, f), (g, h)) = ((a * e + b * g, a * f + b * h), (c * e + d * g, c * f + d * h))
+                # self * other = out
 
-            # self = Matrix(((0, -2), (-2, -5)))
-            # other = Matrix(((6, -6), (3, 0)))
-            # out = (
-            #     (
-            #         self[0, 0] * other[0, 0] + self[0, 1] * other[1, 0],
-            #         self[0, 0] * other[0, 1] + self[0, 1] * other[1, 1],
-            #     ),
-            #     (
-            #         self[1, 0] * other[0, 0] + self[1, 1] * other[1, 0],
-            #         self[1, 0] * other[0, 1] + self[1, 1] * other[1, 1],
-            #     ),
-            # )
+                # self = Matrix(((0, -2), (-2, -5)))
+                # other = Matrix(((6, -6), (3, 0)))
+                # out = (
+                #     (
+                #         self[0, 0] * other[0, 0] + self[0, 1] * other[1, 0],
+                #         self[0, 0] * other[0, 1] + self[0, 1] * other[1, 1],
+                #     ),
+                #     (
+                #         self[1, 0] * other[0, 0] + self[1, 1] * other[1, 0],
+                #         self[1, 0] * other[0, 1] + self[1, 1] * other[1, 1],
+                #     ),
+                # )
 
-            # abds = [[0.0] * 2 for _ in range(2)]
-            # # out2 = ((a, b), (c, d))
-            # for i in range(2):
-            #     for j in range(2):
-            #         abds[i][j] = self[i, 0] * other[0, j] + self[i, 1] * other[1, j]
+                # abds = [[0.0] * 2 for _ in range(2)]
+                # # out2 = ((a, b), (c, d))
+                # for i in range(2):
+                #     for j in range(2):
+                #         abds[i][j] = self[i, 0] * other[0, j] + self[i, 1] * other[1, j]
 
-            k = self.columns
+                k = self.columns
 
-            abds2 = [[0.0] * other.columns for _ in range(self.rows)]
+                abds2 = [[0.0] * other.columns for _ in range(self.rows)]
 
-            for i in range(k):
-                for j in range(k):
-                    abds2[i][j] = sum(
-                        self[i, index] * other[index, j] for index in range(k)
-                    )
+                for i in range(k):
+                    for j in range(k):
+                        abds2[i][j] = sum(
+                            self[i, index] * other[index, j] for index in range(k)
+                        )
 
-            return Matrix(tuple(tuple(thing) for thing in abds2))
-
+                return Matrix(tuple(tuple(thing) for thing in abds2))
+            else:
+                raise Exception("uhh cant multiply these bro")
         elif type(other) is float or type(other) is int:
             return Matrix(tuple(tuple(other * h for h in row) for row in self.data))
         else:
-            pass
+            raise Exception("mate what")
 
         def __iter__(self):  # for unpacking with * and iterating rows
             pass
@@ -150,6 +154,8 @@ class TestMatrix:
     def test_mul_matrix(self):
         m3 = Matrix(matrices1[0]) * Matrix(matrices1[1])
         assert m3.data == ((6, 0), (-27, 12))
+        with pytest.raises(Exception) as e_info:
+            xips = Matrix(matrices8[0]) * Matrix(matrices8[1])
 
     def test_mul_scalar(self):
         m3 = Matrix(((4, 0), (1, -9))) * 2
