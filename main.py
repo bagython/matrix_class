@@ -24,26 +24,7 @@ class Matrix:
 
     def __str__(self) -> str:
         """print the matrix"""
-        # found these silly lil unicode symbols for big square brackets
-        # and yes, of course LEFT SQUARE BRACKET EXTENSION and RIGHT SQUARE BRACKET EXTENSION are different symbols, duh
-
-        # ⎡   ⎤
-        # ⎢   ⎥
-        # ⎣   ⎦
-
-        # ⎡a b 1⎤
-        # ⎢h i j⎥
-        # ⎢c d 2⎥
-        # ⎣e f 3⎦
-        beautified_matrix = """"""
-        extension = self.rows - 2
-        beautified_matrix += f"⎡{self.data[0]}⎤\n"
-        if extension > 0:
-            for row in range(extension):
-                beautified_matrix += f"⎢{self.data[row]}⎥\n"
-        beautified_matrix += f"⎣{self.data[extension + 1]}⎦"
-
-        return beautified_matrix
+        return "\n".join(str(row) for row in self.data)
 
     def __getitem__(self, idxs: tuple[int, int]):
         """return entry at given row index and column index"""
@@ -63,11 +44,6 @@ class Matrix:
 
     def __mul__(self, other: "Matrix | float | int") -> "Matrix":
         """multiply matrix by another matrix OR a scalar"""
-        # other_columns = (
-        #     (row[column] for row in other.data) for column in range(other.columns)
-        # )
-        # ^ seems to match "transposing" a matrix?
-        # nvm?
 
         if type(other) is Matrix:
             if self.columns == other.rows:
@@ -115,8 +91,28 @@ class Matrix:
         else:
             raise Exception("mate what")
 
-        def __iter__(self):  # for unpacking with * and iterating rows
-            pass
+    def __iter__(self):  # for unpacking with * and iterating rows
+        pass
+
+    def __eq__(self, other) -> bool:
+        if self.data == other.data:
+            return True
+        else:
+            return False
+
+    def transpose(self):
+        # other_columns = (
+        #     (row[column] for row in other.data) for column in range(other.columns)
+        # )
+        # ^ seems to match "transposing" a matrix?
+        # nvm?
+
+        return Matrix(
+            tuple(
+                tuple(row[column] for row in self.data)
+                for column in range(self.columns)
+            )
+        )
 
 
 # matrices from homework: numbered by problem number and left/right, accordingly
