@@ -12,7 +12,7 @@
 
 # TEST IT WITH THE MATRICES FROM THE EXERCISES IN THE CLASS!
 
-from typing import Self
+from typing import Iterable, Self
 
 import pytest
 
@@ -26,19 +26,9 @@ class Matrix:
 
     @classmethod
     def identity(cls, size: int) -> Self:
-        # 1 0 0 0
-        # 0 1 0 0
-        # 0 0 1 0
-        # 0 0 0 1
-        # for i in range(size):
-        #     for j in range(size):
-        #         if i ++ j
         return cls(
             tuple(tuple((1 if i == j else 0) for j in range(size)) for i in range(size))
         )
-
-    def inverse(self):
-        pass
 
     def __str__(self) -> str:
         """print the matrix"""
@@ -109,8 +99,8 @@ class Matrix:
         else:
             raise Exception("mate what")
 
-    def __iter__(self):  # for unpacking with * and iterating rows
-        pass
+    def __iter__(self) -> Iterable[tuple]:  # for unpacking with * and iterating rows
+        return iter(self.data)
 
     def __eq__(self, other) -> bool:
         if self.data == other.data:
@@ -119,18 +109,18 @@ class Matrix:
             return False
 
     def transpose(self) -> "Matrix":
-        # other_columns = (
-        #     (row[column] for row in other.data) for column in range(other.columns)
-        # )
-        # ^ seems to match "transposing" a matrix?
-        # nvm?
-
         return Matrix(
             tuple(
                 tuple(row[column] for row in self.data)
                 for column in range(self.columns)
             )
         )
+
+    def determinant(self):
+        pass
+
+    def inverse(self) -> "Matrix":
+        pass
 
 
 # matrices from homework: numbered by problem number and left/right, accordingly
@@ -141,21 +131,9 @@ matrices2 = ((6), (-3)), ((-5), (4))
 matrices8 = ((3, 2, 5), (2, 3, 1)), ((4, 5, -5), (5, -1, 6))  # undefined product
 
 
-# uwu = Matrix(matrices1[0])
-# owo = Matrix(((0, -2), (-2, -5)))[0, 0]
-
-
 class TestMatrix:
-    # def test_str(self):
-    #     assert (
-    #         str(matrices1[0])
-    #         == """⎡a b 1⎤
-    #     ⎢h i j⎥
-    #     ⎢c d 2⎥
-    #     ⎣e f 3⎦"""
-    #     )
-
-    #     pass
+    def test_str(self):
+        assert str(Matrix(matrices8[0])) == """(3, 2, 5)\n(2, 3, 1)"""
 
     def test_getitem(self):
         m1 = Matrix(matrices1[0])
@@ -177,9 +155,11 @@ class TestMatrix:
 
     def test_transpose(self):
         m1 = Matrix(matrices8[0])
-        m2 = Matrix(matrices8[1])
+        m2 = Matrix(matrices1[0])
+        m3 = Matrix(matrices1[1])
         assert m1.transpose().data == ((3, 2), (2, 3), (5, 1))
-        assert (m1 * m2).transpose().data == (m1.transpose() * m2.transpose()).data
+        assert (m2 * m3).transpose().data == (m3.transpose() * m2.transpose()).data
+        assert (m2 + m3).transpose().data == (m2.transpose() + m3.transpose()).data
 
     def test_identity(self):
         assert Matrix.identity(4).data == (
