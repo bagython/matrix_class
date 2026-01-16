@@ -157,6 +157,9 @@ class TestMatrix:
         m3 = Matrix(((4, 0), (1, -9))) * 2
         assert m3.data == ((8, 0), (2, -18))
 
+    def test_transpose(self):
+        assert Matrix(matrices8[0]).transpose().data == ((3, 2), (2, 3), (5, 1))
+
 
 def main():
     print("Hello from matrix-class!")
