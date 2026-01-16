@@ -12,6 +12,8 @@
 
 # TEST IT WITH THE MATRICES FROM THE EXERCISES IN THE CLASS!
 
+from typing import Self
+
 import pytest
 
 
@@ -21,6 +23,22 @@ class Matrix:
         self.rows = len(data)
         self.columns = len(data[0])
         # assumes there is at least one row and every row is same width :/
+
+    @classmethod
+    def identity(cls, size: int) -> Self:
+        # 1 0 0 0
+        # 0 1 0 0
+        # 0 0 1 0
+        # 0 0 0 1
+        # for i in range(size):
+        #     for j in range(size):
+        #         if i ++ j
+        return cls(
+            tuple(tuple((1 if i == j else 0) for j in range(size)) for i in range(size))
+        )
+
+    def inverse(self):
+        pass
 
     def __str__(self) -> str:
         """print the matrix"""
@@ -100,7 +118,7 @@ class Matrix:
         else:
             return False
 
-    def transpose(self):
+    def transpose(self) -> "Matrix":
         # other_columns = (
         #     (row[column] for row in other.data) for column in range(other.columns)
         # )
@@ -158,7 +176,18 @@ class TestMatrix:
         assert m3.data == ((8, 0), (2, -18))
 
     def test_transpose(self):
-        assert Matrix(matrices8[0]).transpose().data == ((3, 2), (2, 3), (5, 1))
+        m1 = Matrix(matrices8[0])
+        m2 = Matrix(matrices8[1])
+        assert m1.transpose().data == ((3, 2), (2, 3), (5, 1))
+        assert (m1 * m2).transpose().data == (m1.transpose() * m2.transpose()).data
+
+    def test_identity(self):
+        assert Matrix.identity(4).data == (
+            (1, 0, 0, 0),
+            (0, 1, 0, 0),
+            (0, 0, 1, 0),
+            (0, 0, 0, 1),
+        )
 
 
 def main():
